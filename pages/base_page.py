@@ -9,6 +9,7 @@ from selenium.webdriver.remote.webelement import WebElement
 class BasePage:
     BASE_URL = 'https://saby.ru/'
     URL = BASE_URL
+
     def __init__(self, driver: WebDriver):
         self.driver = driver
         self.wait = WebDriverWait(driver, 10)
@@ -24,6 +25,17 @@ class BasePage:
         return self.wait.until(EC.presence_of_all_elements_located(locator),
                                message=f"Can't find elements by locator {locator}.")
 
-    def click(self, locator: tuple[str, str]) -> None:
-        self.wait.until(EC.element_to_be_clickable(locator),
-                        message=f"Can't find element by locator {locator}.")
+    def click(self, locator: tuple[str, str]):
+        return self.wait.until(EC.element_to_be_clickable(locator),
+                               message=f"Can't find element by locator {locator}.")
+
+    def add_cookie(self, name: str, value: str, **cookie_options) -> None:
+        cookie_options['name'] = name
+        cookie_options['value'] = value
+        self.driver.add_cookie(cookie_options)
+
+    def refresh(self) -> None:
+        self.driver.refresh()
+
+    def get_current_url(self) -> str:
+        return self.driver.current_url
