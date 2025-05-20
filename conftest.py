@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
@@ -16,3 +18,21 @@ def driver(request):
     my_driver.maximize_window()
     yield my_driver
     my_driver.quit()
+
+
+@pytest.fixture(scope='session', autouse=True)
+def configure_logging():
+    logger = logging.getLogger('myLogger')
+    logger.setLevel(logging.INFO)
+
+    handler = logging.StreamHandler()
+    handler.setLevel(logging.INFO)
+
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+
+    logger.addHandler(handler)
+
+    yield
+
+    logger.removeHandler(handler)
